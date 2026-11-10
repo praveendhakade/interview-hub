@@ -1,0 +1,92 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Validate and build
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Validate interview content
+        run: npm run validate:content
+
+      - name: Generate PDFs
+        run: npm run generate:pdfs
+
+      - name: Validate generated PDFs
+        run: npm run validate:pdfs
+
+      - name: Run ESLint
+        run: npm run lint
+
+      - name: Run TypeScript checks
+        run: npm run typecheck
+
+      # PDFs were generated and validated above. Skip the local pretest hook to avoid regenerating them.
+      - name: Run unit tests
+        run: npm test --ignore-scripts
+
+      # PDFs are already generated. Skip npm's prebuild hook so CI has one explicit PDF generation pass.
+      - name: Build Next.js production application
+        run: npm run build --ignore-scripts
+
+      - name: Locate Chrome for accessibility and responsive checks
+        shell: bash
+        run: |
+          chrome="$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)"
+          if [[ -z "$chrome" ]]; then
+            echo "Chrome/Chromium is required for the configured browser checks." >&2
+            exit 1
+          fi
+          echo "CHROME_PATH=$chrome" >> "$GITHUB_ENV"
+          "$chrome" --version
+
+      - name: Run production browser checks
+        run: npm run validate:browser
+
+      - name: Build Docker image
+        env:
+          DOCKER_BUILDKIT: "1"
+        run: docker build --tag "react-interview-hub:${GITHUB_SHA}" .
+
+      - name: Summarize CI result
+        if: always()
+        env:
+          JOB_STATUS: ${{ job.status }}
+        shell: bash
+        run: |
+          {
+            echo "## CI result"
+            echo
+            echo "Validation job status: **${JOB_STATUS}**"
+            echo
+            echo "Content, PDFs, lint, types, unit tests, browser/a11y checks, Next.js build, and Docker image build are required checks."
+          } >> "$GITHUB_STEP_SUMMARY"

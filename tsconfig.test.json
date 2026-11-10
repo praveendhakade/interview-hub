@@ -1,0 +1,25 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "CommonJS",
+    "moduleResolution": "Node",
+    "noEmit": false,
+    "incremental": false,
+    "rootDir": ".",
+    "outDir": ".test-dist"
+  },
+  "include": [
+    "tests/**/*.ts",
+    "src/config/site.ts",
+    "scripts/validate-content.ts",
+    "src/types/**/*.ts",
+    "src/content/**/*.ts",
+    "src/lib/content.ts",
+    "src/lib/content-validation.ts",
+    "src/lib/question-browsing.ts",
+    "src/lib/pdf-resources.ts",
+    "src/lib/seo.ts",
+    "src/components/questions/**/*.tsx"
+  ],
+  "exclude": ["node_modules", ".next", ".test-dist"]
+}
