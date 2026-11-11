@@ -4,7 +4,7 @@ A modular, SEO-ready interview preparation platform built with Next.js App Route
 
 ## Requirements
 
-- Node.js 22.13 LTS or newer
+- Node.js 26.x
 - npm 10 or newer
 
 ## Local development
@@ -64,11 +64,11 @@ Dockerfile             Multi-stage standalone production image foundation
 
 Question browsing is available at `/react`; category pages and individual answer pages are generated from the content files. Search and filters submit as accessible GET forms, so they work without client-side state. The short route `/react/architecture` redirects to the existing category slug at `/react/architecture-optimization`.
 
-The PDF library is available on `/react`. Regenerate the 40 question PDFs, four category PDFs, and complete guide after changing question content with `npm run generate:pdfs`; verify the files and extracted text with `npm run validate:pdfs`. PDF files are generated before development, tests, and production builds, so they are included in Vercel and Docker deployments without a request-time PDF service.
+The PDF library is available on `/react`. Regenerate the 40 question PDFs, four category PDFs, and complete guide after changing question content with `npm run generate:pdfs`; verify the files and extracted text with `npm run validate:pdfs`. PDF files are generated before development, tests, and production builds, so they are included in Vercel and Docker deployments without a request-time PDF service. **Current downloads in `public/downloads` are public and are not paywalled**; do not put paid files there, because anyone who knows a static file URL can fetch it directly.
 
 ## Search and social metadata
 
-Page titles, descriptions, canonical paths, Open Graph cards, and Twitter/X cards are generated from the route and its content. Question pages include article and breadcrumb JSON-LD; the home page includes WebSite JSON-LD. The sitemap and robots files use the configured public origin. Set `NEXT_PUBLIC_SITE_URL` to the production HTTPS origin in Vercel's **Production** environment. If it is absent, the site uses Vercel's `VERCEL_PROJECT_PRODUCTION_URL` system variable, which identifies the production host even during a Preview build; it never uses `VERCEL_URL`, the per-deployment preview host. Enable Vercel's automatic system environment variables for this fallback. Local development falls back to `http://localhost:3000`; production builds without either production URL omit origin-dependent metadata and sitemap entries instead of publishing a guessed host. Optionally set `NEXT_PUBLIC_OG_IMAGE_URL` to a root-relative image path or absolute HTTPS image URL; otherwise the site generates a branded social image, with a title-specific image for question pages.
+Page titles, descriptions, canonical paths, Open Graph cards, and Twitter/X cards are generated from the route and its content. Question pages include article and breadcrumb JSON-LD; the home page includes WebSite JSON-LD. The sitemap and robots files use the configured public origin. Set `NEXT_PUBLIC_SITE_URL` to the production HTTPS origin in Vercel's **Production** environment. If it is absent, the site uses Vercel's `VERCEL_PROJECT_PRODUCTION_URL` system variable, which identifies the production host even during a Preview build; it never uses `VERCEL_URL`, the per-deployment preview host. Enable Vercel's automatic system environment variables for this fallback. Local development falls back to `http://localhost:3000`; production builds without either production URL omit origin-dependent metadata and sitemap entries instead of publishing a guessed host. The static branded `public/social-image.png` is used as the default social preview to avoid a separately bundled Edge Function; optionally set `NEXT_PUBLIC_OG_IMAGE_URL` to another root-relative image path or absolute HTTPS image URL.
 
 ## Social links
 
@@ -86,7 +86,7 @@ These `NEXT_PUBLIC_*` values are public and embedded into the application at bui
 
 ## Docker
 
-The multi-stage image uses Node 22 Alpine, `npm ci`, Next.js standalone output, BuildKit's npm cache, and a non-root runtime user. The image health check calls `/api/health`. PDFs are regenerated during the builder's `npm run build` prebuild hook and copied into the runtime's `public/downloads`; pre-existing generated PDF binaries are excluded from the Docker build context.
+The multi-stage image uses Node 26 Alpine, `npm ci`, Next.js standalone output, BuildKit's npm cache, and a non-root runtime user. The image health check calls `/api/health`. PDFs are regenerated during the builder's `npm run build` prebuild hook and copied into the runtime's `public/downloads`; pre-existing generated PDF binaries are excluded from the Docker build context.
 
 ```bash
 docker build -t react-interview-hub .
@@ -121,7 +121,7 @@ These repository settings must be enabled by a repository administrator; they ar
 
 1. Push this repository to GitHub, then import the repository in Vercel. Select the repository root as the Root Directory and Next.js as the framework.
 2. In Project Settings â†’ Git, set the Production Branch to `main`. Enable Preview deployments for pull requests/branches and Production deployment for `main`. Connect the GitHub integration and allow its repository access.
-3. Keep the standard Next.js settings: Node.js 22.x (compatible with CI's Node 22 and the `>=22.13.0` project engine), Install Command `npm ci`, Build Command `npm run build`, and the default Next.js Output Directory. Do not set `output: "export"` or override the output directory. `npm run build` already runs its `prebuild` lifecycle hook, which generates and validates the 45 PDFs once before `next build`.
+3. Keep the standard Next.js settings: Node.js 26.x (matching local development, CI, Docker, and the `26.x` project engine), Install Command `npm ci`, Build Command `npm run build`, and the default Next.js Output Directory. Do not set `output: "export"` or override the output directory. `npm run build` already runs its `prebuild` lifecycle hook, which generates and validates the 45 PDFs once before `next build`.
 4. In Settings â†’ Environment Variables, set `NEXT_PUBLIC_SITE_URL=https://<project-name>.vercel.app` for Production. Alternatively, enable automatic system environment variables and let `VERCEL_PROJECT_PRODUCTION_URL` supply the production hostname. Do not set the per-deployment `VERCEL_URL` as the canonical origin. Set the optional social URL/image variables only when their real values are known.
 5. Create a pull request targeting `main`. Wait for the independent GitHub **Validate and build** check and Vercel Preview deployment; inspect the Preview URL, then merge only after approval and passing checks. Vercel deploys `main` to Production automatically. GitHub Actions validates and builds but does not deploy.
 6. After the first production deployment completes, record the actual `.vercel.app` URL in this README. Validate it using the steps below before calling the site launched.
@@ -169,7 +169,8 @@ Submitting a sitemap or requesting indexing is a discovery signal, not a guarant
 
 ### Production troubleshooting
 
-- **Build fails:** confirm Node.js 22.x, `npm ci`, and `npm run build`; inspect Vercel's build logs. The build hook creates PDFs before Next compiles.
+- **Build fails:** confirm Node.js 26.x, `npm ci`, and `npm run build`; inspect Vercel's build logs. The build hook creates PDFs before Next compiles.
+- **Vercel reports an oversized `social-image` Edge Function:** the social preview now uses a static PNG from `public/`, so a new commit should no longer create that Edge Function. Confirm the deployment commit includes `public/social-image.png` and the `social-image` route was removed.
 - **Canonical URLs or sitemap are missing/wrong:** set Production `NEXT_PUBLIC_SITE_URL` to the exact HTTPS primary origin, or enable Vercel system variables so `VERCEL_PROJECT_PRODUCTION_URL` is available; trigger a new deployment because public environment values are build-time values.
 - **PDF route is missing:** inspect the build log for PDF generation/validation, then check the requested filename against `createPdfManifest()` and `/react`'s download library.
 - **Preview uses production canonical URLs:** this is intentional to avoid indexing deployment-specific hosts. Do not configure `NEXT_PUBLIC_SITE_URL` to a Preview URL.

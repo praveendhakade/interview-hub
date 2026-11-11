@@ -22,13 +22,13 @@ export const metadata: Metadata = {
     title: siteConfig.name,
     description: siteConfig.description,
     type: "website",
-    ...(siteConfig.metadataBase ? { images: [{ url: siteConfig.openGraphImage ?? "/social-image?title=Crack%20Your%20Next%20Developer%20Interview", width: 1200, height: 630, alt: siteConfig.name }] } : {}),
+    ...(siteConfig.metadataBase ? { images: [{ url: siteConfig.openGraphImage ?? "/social-image.png", width: 1200, height: 630, alt: siteConfig.name }] } : {}),
   },
   twitter: {
     card: "summary_large_image",
     title: siteConfig.name,
     description: siteConfig.description,
-    ...(siteConfig.metadataBase ? { images: [siteConfig.openGraphImage ?? "/social-image?title=Crack%20Your%20Next%20Developer%20Interview"] } : {}),
+    ...(siteConfig.metadataBase ? { images: [siteConfig.openGraphImage ?? "/social-image.png"] } : {}),
   },
 };
 

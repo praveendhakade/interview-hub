@@ -78,7 +78,7 @@ for (const path of routes) {
     if (target.origin !== new URL(origin).origin) continue;
     const internalRoute = normalizeRoute(target.pathname);
     const isStaticFile = internalRoute.startsWith("/downloads/");
-    const isSocialImage = internalRoute === "/social-image";
+    const isSocialImage = internalRoute === "/social-image.png";
     assert.ok(routeSet.has(internalRoute) || isStaticFile || isSocialImage, `${path} contains broken internal link ${href}`);
     if (target.hash && internalRoute === normalizeRoute(new URL(document.URL).pathname)) {
       assert.ok(document.getElementById(decodeURIComponent(target.hash.slice(1))), `${path} has an anchor target for ${href}`);
@@ -114,7 +114,7 @@ assert.match(robotsText, /Allow: \/|Allow: \/\s/);
 if (sitemapUrls.length) assert.match(robotsText, /Sitemap:\s+https:\/\//);
 else assert.doesNotMatch(robotsText, /Sitemap:/);
 
-const socialImage = await fetch(new URL("/social-image?title=SEO%20validation", origin));
+const socialImage = await fetch(new URL("/social-image.png", origin));
 assert.equal(socialImage.status, 200);
 assert.match(socialImage.headers.get("content-type") ?? "", /image\/png/);
 assert.equal((await socialImage.arrayBuffer()).byteLength > 1_000, true);

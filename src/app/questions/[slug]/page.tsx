@@ -21,7 +21,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     description,
     path,
     type: "article",
-    image: `/social-image?title=${encodeURIComponent(question.title)}&eyebrow=React%20interview%20question`,
+    image: "/social-image.png",
   });
 }
 

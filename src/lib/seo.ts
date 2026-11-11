@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { siteConfig } from "../config/site";
 
-export const DEFAULT_SOCIAL_IMAGE = "/social-image?title=Crack%20Your%20Next%20Developer%20Interview";
+export const DEFAULT_SOCIAL_IMAGE = "/social-image.png";
 
 export function getPublicSiteUrl(): string | undefined {
   return siteConfig.siteUrl ?? (process.env.NODE_ENV !== "production" ? "http://localhost:3000" : undefined);
