@@ -4,7 +4,7 @@ import { Container } from "@/components/common/ui";
 import { siteConfig } from "@/config/site";
 import { getAllTechnologies } from "@/lib/content";
 
-function SocialLink({ href, label, icon }: { href?: string; label: string; icon: "instagram" | "github" }) {
+function SocialLink({ href, label, icon }: { href?: string; label: string; icon: "instagram" | "github" | "linkedin" }) {
   if (!href) {
     return <span className="not-configured">{label} · not configured</span>;
   }
@@ -66,6 +66,7 @@ export function Footer() {
             <div className="footer-links">
               <SocialLink href={siteConfig.social.instagramUrl} icon="instagram" label="Instagram" />
               <SocialLink href={siteConfig.social.githubUrl} icon="github" label="GitHub" />
+              <SocialLink href={siteConfig.social.linkedinUrl} icon="linkedin" label="LinkedIn" />
             </div>
           </div>
         </div>

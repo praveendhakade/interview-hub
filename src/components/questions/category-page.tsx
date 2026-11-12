@@ -29,7 +29,7 @@ export function CategoryPage({ category }: { category: Category }) {
           <h1 className="learning-title">{category.title}</h1>
           <p className="learning-intro">{category.description}</p>
           <p className="question-total"><strong>{questions.length}</strong> interview questions</p>
-          <a className="button button-secondary category-pdf-download" download href={getPdfDownloadUrl(getCategoryPdfFilename(category.slug))}>Download category guide</a>
+          <a className="button button-secondary category-pdf-download" href={getPdfDownloadUrl(getCategoryPdfFilename(category.slug))}>Download category guide</a>
         </Container>
       </section>
       <section aria-label={`${category.title} questions`} className="question-browser section">

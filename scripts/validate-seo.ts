@@ -77,7 +77,7 @@ for (const path of routes) {
     const target = new URL(href, document.URL);
     if (target.origin !== new URL(origin).origin) continue;
     const internalRoute = normalizeRoute(target.pathname);
-    const isStaticFile = internalRoute.startsWith("/downloads/");
+    const isStaticFile = internalRoute.startsWith("/api/downloads/");
     const isSocialImage = internalRoute === "/social-image.png";
     assert.ok(routeSet.has(internalRoute) || isStaticFile || isSocialImage, `${path} contains broken internal link ${href}`);
     if (target.hash && internalRoute === normalizeRoute(new URL(document.URL).pathname)) {

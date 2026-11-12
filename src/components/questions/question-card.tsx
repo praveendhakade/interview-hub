@@ -24,7 +24,7 @@ export function QuestionCard({ question }: { question: InterviewQuestion }) {
       <Link className="text-link" href={getQuestionUrl(question.slug)}>
         View answer <span aria-hidden="true">→</span>
       </Link>
-      <a className="question-pdf-link" download href={getPdfDownloadUrl(getQuestionPdfFilename(question.slug))}>Download PDF</a>
+      <a className="question-pdf-link" href={getPdfDownloadUrl(getQuestionPdfFilename(question.slug))}>Download PDF</a>
     </article>
   );
 }

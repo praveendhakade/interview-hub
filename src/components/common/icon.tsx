@@ -9,6 +9,7 @@ type IconName =
   | "gift"
   | "github"
   | "instagram"
+  | "linkedin"
   | "layers"
   | "menu"
   | "moon"
@@ -47,6 +48,12 @@ const iconPaths: Record<IconName, ReactNode> = {
       <rect x="3" y="3" width="18" height="18" rx="5" />
       <circle cx="12" cy="12" r="4" />
       <path d="M17.5 6.5h.01" />
+    </>
+  ),
+  linkedin: (
+    <>
+      <rect x="3" y="3" width="18" height="18" rx="2" />
+      <path d="M8 10v7M8 7h.01M12 17v-4a3 3 0 0 1 6 0v4m-6-4v4" />
     </>
   ),
   layers: (

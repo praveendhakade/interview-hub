@@ -52,11 +52,9 @@ src/
 scripts/               Content validation, PDF generation, and PDF verification
 tests/                 Content, browsing, and PDF generation tests
 .github/workflows/     Required CI workflow for pull requests and main
-public/downloads/      Generated question, category, and complete guide PDFs
 public/
   images/              Static image assets
   fonts/               Local font assets
-  downloads/           Generated guides and other downloads
 Dockerfile             Multi-stage standalone production image foundation
 .dockerignore          Files excluded from Docker build context
 .github/workflows/ci.yml  Content, PDF, code, browser, build, and Docker checks
@@ -64,7 +62,7 @@ Dockerfile             Multi-stage standalone production image foundation
 
 Question browsing is available at `/react`; category pages and individual answer pages are generated from the content files. Search and filters submit as accessible GET forms, so they work without client-side state. The short route `/react/architecture` redirects to the existing category slug at `/react/architecture-optimization`.
 
-The PDF library is available on `/react`. Regenerate the 40 question PDFs, four category PDFs, and complete guide after changing question content with `npm run generate:pdfs`; verify the files and extracted text with `npm run validate:pdfs`. PDF files are generated before development, tests, and production builds, so they are included in Vercel and Docker deployments without a request-time PDF service. **Current downloads in `public/downloads` are public and are not paywalled**; do not put paid files there, because anyone who knows a static file URL can fetch it directly.
+The PDF library is available on `/react`. Downloads are rendered on demand by `/api/downloads/[filename]`, so development startup, tests, and production builds do not generate PDF files. To generate a local batch for document quality checks, run `npm run generate:pdfs`, then `npm run validate:pdfs`. Question pages link to [@ai_dev234](https://www.instagram.com/ai_dev234/); add an `instagramReelUrl` to a question in `src/content/react` to point directly to its reel.
 
 ## Search and social metadata
 
@@ -86,7 +84,7 @@ These `NEXT_PUBLIC_*` values are public and embedded into the application at bui
 
 ## Docker
 
-The multi-stage image uses Node 26 Alpine, `npm ci`, Next.js standalone output, BuildKit's npm cache, and a non-root runtime user. The image health check calls `/api/health`. PDFs are regenerated during the builder's `npm run build` prebuild hook and copied into the runtime's `public/downloads`; pre-existing generated PDF binaries are excluded from the Docker build context.
+The multi-stage image uses Node 26 Alpine, `npm ci`, Next.js standalone output, BuildKit's npm cache, and a non-root runtime user. The image health check calls `/api/health`. PDF documents are rendered only when their download routes are requested.
 
 ```bash
 docker build -t react-interview-hub .
@@ -94,7 +92,7 @@ docker run -d -p 3000:3000 --name react-interview-hub react-interview-hub
 curl --fail http://localhost:3000/
 curl --fail http://localhost:3000/react
 curl --fail http://localhost:3000/questions/what-is-react
-curl --fail http://localhost:3000/downloads/react-question-what-is-react.pdf -o question.pdf
+curl --fail http://localhost:3000/api/downloads/react-question-what-is-react.pdf -o question.pdf
 curl --fail http://localhost:3000/api/health
 docker inspect --format='{{.State.Health.Status}}' react-interview-hub
 docker stop react-interview-hub
@@ -121,7 +119,7 @@ These repository settings must be enabled by a repository administrator; they ar
 
 1. Push this repository to GitHub, then import the repository in Vercel. Select the repository root as the Root Directory and Next.js as the framework.
 2. In Project Settings â†’ Git, set the Production Branch to `main`. Enable Preview deployments for pull requests/branches and Production deployment for `main`. Connect the GitHub integration and allow its repository access.
-3. Keep the standard Next.js settings: Node.js 26.x (matching local development, CI, Docker, and the `26.x` project engine), Install Command `npm ci`, Build Command `npm run build`, and the default Next.js Output Directory. Do not set `output: "export"` or override the output directory. `npm run build` already runs its `prebuild` lifecycle hook, which generates and validates the 45 PDFs once before `next build`.
+3. Keep the standard Next.js settings: Node.js 26.x (matching local development, CI, Docker, and the `26.x` project engine), Install Command `npm ci`, Build Command `npm run build`, and the default Next.js Output Directory. Do not set `output: "export"` or override the output directory. PDF downloads render at request time through the Node.js API route.
 4. In Settings â†’ Environment Variables, set `NEXT_PUBLIC_SITE_URL=https://<project-name>.vercel.app` for Production. Alternatively, enable automatic system environment variables and let `VERCEL_PROJECT_PRODUCTION_URL` supply the production hostname. Do not set the per-deployment `VERCEL_URL` as the canonical origin. Set the optional social URL/image variables only when their real values are known.
 5. Create a pull request targeting `main`. Wait for the independent GitHub **Validate and build** check and Vercel Preview deployment; inspect the Preview URL, then merge only after approval and passing checks. Vercel deploys `main` to Production automatically. GitHub Actions validates and builds but does not deploy.
 6. After the first production deployment completes, record the actual `.vercel.app` URL in this README. Validate it using the steps below before calling the site launched.
@@ -169,7 +167,7 @@ Submitting a sitemap or requesting indexing is a discovery signal, not a guarant
 
 ### Production troubleshooting
 
-- **Build fails:** confirm Node.js 26.x, `npm ci`, and `npm run build`; inspect Vercel's build logs. The build hook creates PDFs before Next compiles.
+- **Build fails:** confirm Node.js 26.x, `npm ci`, and `npm run build`; inspect Vercel's build logs.
 - **Vercel reports an oversized `social-image` Edge Function:** the social preview now uses a static PNG from `public/`, so a new commit should no longer create that Edge Function. Confirm the deployment commit includes `public/social-image.png` and the `social-image` route was removed.
 - **Canonical URLs or sitemap are missing/wrong:** set Production `NEXT_PUBLIC_SITE_URL` to the exact HTTPS primary origin, or enable Vercel system variables so `VERCEL_PROJECT_PRODUCTION_URL` is available; trigger a new deployment because public environment values are build-time values.
 - **PDF route is missing:** inspect the build log for PDF generation/validation, then check the requested filename against `createPdfManifest()` and `/react`'s download library.

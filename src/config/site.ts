@@ -62,7 +62,8 @@ export const siteConfig = {
     { label: "About", href: "/#about" },
   ] satisfies SiteLink[],
   social: {
-    instagramUrl: getHttpsUrl(process.env.NEXT_PUBLIC_INSTAGRAM_URL),
-    githubUrl: getHttpsUrl(process.env.NEXT_PUBLIC_GITHUB_URL),
+    instagramUrl: getHttpsUrl(process.env.NEXT_PUBLIC_INSTAGRAM_URL) ?? "https://www.instagram.com/ai_dev234/",
+    githubUrl: getHttpsUrl(process.env.NEXT_PUBLIC_GITHUB_URL) ?? "https://github.com/praveendhakade",
+    linkedinUrl: "https://www.linkedin.com/in/praveendhakade/",
   },
 } as const;

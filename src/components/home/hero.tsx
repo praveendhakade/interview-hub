@@ -1,6 +1,7 @@
 import { Icon, TechnologyIcon } from "@/components/common/icon";
 import { ButtonLink, Container, Eyebrow } from "@/components/common/ui";
 import { siteConfig } from "@/config/site";
+import { getPdfDownloadUrl } from "@/lib/pdf-resources";
 
 function HeroIllustration() {
   return (
@@ -53,7 +54,7 @@ export function Hero() {
           <p className="hero-description">{siteConfig.description}</p>
           <div className="hero-actions">
             <ButtonLink href="/react">Explore React Questions</ButtonLink>
-            <ButtonLink download href="/downloads/react-interview-preparation-guide.pdf" variant="secondary">
+            <ButtonLink href={getPdfDownloadUrl("react-interview-preparation-guide.pdf")} variant="secondary">
               <Icon name="book" />
               Download Free Guide
             </ButtonLink>

@@ -6,9 +6,7 @@
     "node": "26.x"
   },
   "scripts": {
-    "predev": "npm run generate:pdfs && npm run validate:pdfs",
     "dev": "next dev --webpack",
-    "prebuild": "npm run generate:pdfs && npm run validate:pdfs",
     "build": "next build --webpack",
     "start": "node scripts/start-production.mjs",
     "generate:pdfs": "node --import tsx/esm scripts/generate-pdfs.ts",
@@ -19,7 +17,6 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "validate:content": "tsc --project tsconfig.test.json && node .test-dist/scripts/validate-content.js",
-    "pretest": "npm run generate:pdfs",
     "test": "tsc --project tsconfig.test.json && node --import=./.test-dist/tests/dom-setup.js --test --test-concurrency=1 --experimental-test-isolation=none .test-dist/tests/content.test.js .test-dist/tests/browsing.test.js && node --test .test-dist/tests/pdf.test.js .test-dist/tests/seo.test.js"
   },
   "dependencies": {

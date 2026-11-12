@@ -25,7 +25,7 @@ export function FeaturedResources() {
               <h3><Link href={`/react/${category.slug}`}>{category.title}</Link></h3>
               <p>{category.description}</p>
               <span className="resource-label">{getQuestionCountByCategory(category.id)} interview questions</span>
-              <a className="resource-download" download href={getPdfDownloadUrl(getCategoryPdfFilename(category.slug))}>Download collection PDF</a>
+              <a className="resource-download" href={getPdfDownloadUrl(getCategoryPdfFilename(category.slug))}>Download collection PDF</a>
             </article>
           ))}
         </div>
@@ -36,7 +36,7 @@ export function FeaturedResources() {
             <strong>Your complete React interview guide.</strong>
             <span>Download all 40 questions and keep the full learning collection for offline study.</span>
           </div>
-          <a className="button button-secondary guide-download" download href="/downloads/react-interview-preparation-guide.pdf"><Icon name="download" />Download complete guide</a>
+          <a className="button button-secondary guide-download" href={getPdfDownloadUrl("react-interview-preparation-guide.pdf")}><Icon name="download" />Download complete guide</a>
         </div>
       </Container>
     </section>

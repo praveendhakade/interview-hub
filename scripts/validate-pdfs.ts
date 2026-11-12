@@ -39,7 +39,7 @@ async function main() {
       throw new Error(`Invalid or empty PDF file: ${target.fileName}`);
     }
     totalBytes += fileStats.size;
-    if (getPdfDownloadUrl(target.fileName) !== `/downloads/${target.fileName}`) {
+    if (getPdfDownloadUrl(target.fileName) !== `/api/downloads/${target.fileName}`) {
       throw new Error(`Invalid download URL for ${target.fileName}`);
     }
     const text = normalizeExtractedText(await extractText(filePath));

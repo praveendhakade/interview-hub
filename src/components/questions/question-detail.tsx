@@ -124,10 +124,11 @@ export function QuestionDetail({ question }: { question: InterviewQuestion }) {
 
           <section aria-label="PDF download" className="pdf-placeholder surface-card">
             <div><strong>Take this answer with you</strong><p>Download this question as a printable guide.</p></div>
-            <a className="button button-secondary" download href={getPdfDownloadUrl(getQuestionPdfFilename(question.slug))}>Download question PDF</a>
+            <a className="button button-secondary" href={getPdfDownloadUrl(getQuestionPdfFilename(question.slug))}>Download question PDF</a>
           </section>
 
           <RelatedQuestions questions={relatedQuestions} />
+          <p className="instagram-link"><a href={question.instagramReelUrl ?? "https://www.instagram.com/ai_dev234/"} target="_blank" rel="noreferrer">{question.instagramReelUrl ? "Watch the related Instagram reel" : "Explore React reels on Instagram"}</a></p>
 
           <nav aria-label="Question navigation" className="question-pagination">
             {previous ? <Link href={getQuestionUrl(previous.slug)}><span>Previous question</span><strong>{previous.title}</strong></Link> : <span />}

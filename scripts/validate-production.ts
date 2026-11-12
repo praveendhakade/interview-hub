@@ -67,7 +67,7 @@ assert.ok(filterDocument.body.textContent?.includes(`${categoryQuestions.length}
 
 const manifest = createPdfManifest();
 for (const pdf of manifest) {
-  const response = await getResponse(`/downloads/${pdf.fileName}`);
+  const response = await getResponse(`/api/downloads/${pdf.fileName}`);
   assert.match(response.headers.get("content-type") ?? "", /application\/pdf/, `${pdf.fileName} should have a PDF content type`);
   const bytes = new Uint8Array(await response.arrayBuffer());
   assert.ok(bytes.byteLength > 100, `${pdf.fileName} should not be empty`);

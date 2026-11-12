@@ -29,4 +29,5 @@ export type InterviewQuestion = {
   tags: readonly string[];
   estimatedReadingTime: number;
   relatedQuestionIds: readonly string[];
+  instagramReelUrl?: string;
 };

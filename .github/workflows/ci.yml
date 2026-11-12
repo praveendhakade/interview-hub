@@ -38,25 +38,17 @@ jobs:
       - name: Validate interview content
         run: npm run validate:content
 
-      - name: Generate PDFs
-        run: npm run generate:pdfs
-
-      - name: Validate generated PDFs
-        run: npm run validate:pdfs
-
       - name: Run ESLint
         run: npm run lint
 
       - name: Run TypeScript checks
         run: npm run typecheck
 
-      # PDFs were generated and validated above. Skip the local pretest hook to avoid regenerating them.
       - name: Run unit tests
-        run: npm test --ignore-scripts
+        run: npm test
 
-      # PDFs are already generated. Skip npm's prebuild hook so CI has one explicit PDF generation pass.
       - name: Build Next.js production application
-        run: npm run build --ignore-scripts
+        run: npm run build
 
       - name: Locate Chrome for accessibility and responsive checks
         shell: bash

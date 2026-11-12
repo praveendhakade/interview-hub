@@ -78,6 +78,9 @@ export function validateContent(
     if (!question.title.trim()) errors.push(`${owner}: title is required.`);
     if (!question.shortAnswer.trim()) errors.push(`${owner}: shortAnswer must not be empty.`);
     if (!question.detailedAnswer.trim()) errors.push(`${owner}: detailedAnswer must not be empty.`);
+    if (question.instagramReelUrl && !/^https:\/\/(?:www\.)?instagram\.com\/(?:reel|reels|p)\/[A-Za-z0-9_-]+\/?(?:\?.*)?$/.test(question.instagramReelUrl)) {
+      errors.push(`${owner}: instagramReelUrl must be an Instagram reel URL.`);
+    }
     if (!validDifficulties.includes(question.difficulty)) errors.push(`${owner}: invalid difficulty "${question.difficulty}".`);
     if (!technologyIds.has(question.technologyId)) errors.push(`${owner}: unknown technologyId "${question.technologyId}".`);
     if (!categoryIds.has(question.categoryId)) errors.push(`${owner}: unknown categoryId "${question.categoryId}".`);

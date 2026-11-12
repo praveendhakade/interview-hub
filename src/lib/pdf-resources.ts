@@ -25,7 +25,7 @@ export function getPdfDownloadUrl(fileName: string): string {
   if (!/^[a-z0-9]+(?:-[a-z0-9]+)*\.pdf$/.test(fileName)) {
     throw new Error(`Invalid PDF filename: ${fileName}`);
   }
-  return `/downloads/${fileName}`;
+  return `/api/downloads/${fileName}`;
 }
 
 export function createPdfManifest(
